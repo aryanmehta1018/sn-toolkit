@@ -104,3 +104,15 @@
     @apply bg-[#1A1C26] border-b border-[#2A2D3E] px-5 py-4;
   }
 }
+
+/* Additional animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-bg {
+  background: linear-gradient(90deg, #1A1C26 25%, #21232F 50%, #1A1C26 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
