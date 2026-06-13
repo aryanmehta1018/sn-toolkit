@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { SYSTEM_PROMPTS } from '../prompts.js';
 import { saveArtifact } from '../lib/supabase.js';
@@ -8,15 +8,15 @@ import { saveArtifact } from '../lib/supabase.js';
 export const generateRouter = Router();
 
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max: 20,
   message: { error: 'Too many requests. Please wait a moment.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 const GenerateSchema = z.object({
@@ -42,11 +42,12 @@ generateRouter.post('/', limiter, async (req, res) => {
   }
 
   try {
-    const message = await client.messages.create({
-      model: 'claude-opus-4-5-20241022',
+    const completion = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
       max_tokens: 4096,
-      system: systemPrompt,
+      temperature: 0.2,
       messages: [
+        { role: 'system', content: systemPrompt },
         {
           role: 'user',
           content: `Business Requirements:\n\n${requirements}\n\nGenerate the ${type} configuration now. Return only valid JSON.`,
@@ -54,10 +55,7 @@ generateRouter.post('/', limiter, async (req, res) => {
       ],
     });
 
-    const rawText = message.content
-      .filter(block => block.type === 'text')
-      .map(block => block.text)
-      .join('');
+    const rawText = completion.choices[0]?.message?.content ?? '';
 
     // Strip markdown fences if present
     const cleaned = rawText
@@ -66,9 +64,9 @@ generateRouter.post('/', limiter, async (req, res) => {
       .replace(/\s*```$/i, '')
       .trim();
 
-    let parsed_result;
+    let result;
     try {
-      parsed_result = JSON.parse(cleaned);
+      result = JSON.parse(cleaned);
     } catch (jsonErr) {
       console.error('JSON parse error:', jsonErr.message);
       console.error('Raw response:', rawText.substring(0, 500));
@@ -77,9 +75,9 @@ generateRouter.post('/', limiter, async (req, res) => {
       });
     }
 
-    // Persist to Supabase (non-blocking — don't fail the request if DB write fails)
+    // Persist to Supabase (non-blocking)
     if (sessionId) {
-      saveArtifact({ type, requirements, result: parsed_result, sessionId }).catch(err =>
+      saveArtifact({ type, requirements, result, sessionId }).catch(err =>
         console.error('Supabase save error:', err.message)
       );
     }
@@ -87,20 +85,16 @@ generateRouter.post('/', limiter, async (req, res) => {
     return res.json({
       success: true,
       type,
-      data: parsed_result,
+      data: result,
       usage: {
-        input_tokens: message.usage.input_tokens,
-        output_tokens: message.usage.output_tokens,
+        input_tokens: completion.usage?.prompt_tokens ?? 0,
+        output_tokens: completion.usage?.completion_tokens ?? 0,
       },
     });
   } catch (err) {
-    if (err instanceof Anthropic.APIError) {
-      console.error(`Anthropic API error ${err.status}:`, err.message);
-      return res.status(502).json({
-        error: `AI service error: ${err.message}`,
-      });
-    }
-    console.error('Unexpected error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Groq API error:', err?.message ?? err);
+    return res.status(502).json({
+      error: `AI service error: ${err?.message ?? 'Unknown error'}`,
+    });
   }
 });

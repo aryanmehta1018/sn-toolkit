@@ -22,7 +22,7 @@ cd frontend && npm install
 
 **backend/.env**
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+GROQ_API_KEY=gsk_...
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 PORT=3001
@@ -61,7 +61,7 @@ Open http://localhost:5173
 1. Push repo to GitHub
 2. Go to https://render.com → New Web Service → connect repo
 3. Render auto-detects `render.yaml` — just add env vars:
-   - `ANTHROPIC_API_KEY`
+   - `GROQ_API_KEY`
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_KEY`
    - `FRONTEND_URL` (your Vercel URL, e.g. https://sn-toolkit.vercel.app)
