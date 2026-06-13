@@ -1,88 +1,81 @@
-# SN Toolkit — ServiceNow Developer Productivity
+# SN Toolkit
 
-AI-powered toolkit that turns business requirements into production-ready ServiceNow artifacts.
+**ServiceNow Developer Productivity, powered by AI.**
 
-## Stack
-- **Frontend** — React + Vite + Tailwind CSS → deployed on **Vercel**
-- **Backend** — Express + Node.js + Anthropic SDK → deployed on **Render**
-- **Database** — Supabase (Postgres) → artifact history
-
-## Local Development
-
-### 1. Clone & install
-```bash
-# Backend
-cd backend && npm install
-
-# Frontend
-cd frontend && npm install
-```
-
-### 2. Environment variables
-
-**backend/.env**
-```
-GROQ_API_KEY=gsk_...
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_SERVICE_KEY=your-service-role-key
-PORT=3001
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
-```
-
-**frontend/.env**
-```
-VITE_API_URL=http://localhost:3001
-VITE_SUPABASE_URL=https://xxx.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 3. Run
-```bash
-# Terminal 1 — backend
-cd backend && npm run dev
-
-# Terminal 2 — frontend
-cd frontend && npm run dev
-```
-
-Open http://localhost:5173
+SN Toolkit turns plain English business requirements into production-ready ServiceNow artifacts in seconds. No more staring at a blank ServiceNow Studio. Describe what you need to build, and get complete, structured output you can take straight into your instance.
 
 ---
 
-## Deployment
+## What it does
 
-### Supabase (Database)
-1. Go to https://supabase.com → New Project
-2. Open SQL Editor → paste contents of `supabase/migrations/001_init.sql` → Run
-3. Copy Project URL + service_role key (Settings → API)
+Most ServiceNow development starts the same way — someone hands you a Word document full of requirements and you spend hours translating that into tables, flows, catalog items, and access rules. SN Toolkit automates that translation layer.
 
-### Render (Backend)
-1. Push repo to GitHub
-2. Go to https://render.com → New Web Service → connect repo
-3. Render auto-detects `render.yaml` — just add env vars:
-   - `GROQ_API_KEY`
-   - `SUPABASE_URL`
-   - `SUPABASE_SERVICE_KEY`
-   - `FRONTEND_URL` (your Vercel URL, e.g. https://sn-toolkit.vercel.app)
-4. Deploy — note your Render URL (e.g. https://sn-toolkit-api.onrender.com)
-
-### Vercel (Frontend)
-1. Go to https://vercel.com → New Project → import repo
-2. Set **Root Directory** to `frontend`
-3. Add env vars:
-   - `VITE_API_URL` = your Render URL (e.g. https://sn-toolkit-api.onrender.com)
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-4. Deploy
+You describe your use case once. The toolkit generates all four artifact types from the same requirements.
 
 ---
 
-## Features
-- Generate **Tables** — field schemas, types, indexes, role definitions
-- Generate **Flows** — Flow Designer logic with triggers, steps, error handling
-- Generate **Catalog Items** — variables, SLAs, approval rules, UI policies
-- Generate **ACLs** — role-based access rules, data policies, security recommendations
-- **History sidebar** — all generated artifacts saved per session
-- **Copy buttons** — copy any artifact as JSON
-- **Supabase persistence** — history saved across sessions
+## The four generators
+
+### Tables
+Generates a complete table schema — field names, data types, mandatory flags, reference relationships, choice values, indexes, and role definitions. Output follows ServiceNow naming conventions (`u_` prefix, snake_case) and includes everything you need to create the table in Studio or via update set.
+
+### Flows
+Builds out Flow Designer logic — trigger type, table, conditions, and a full step-by-step flow with action types, inputs, outputs, and error handling. Covers approvals, email notifications, record operations, subflows, and conditional branching.
+
+### Catalog Items
+Produces a complete service catalog item definition — category, SLA, fulfillment group, approval settings, and every variable with its type, order, help text, choice options, and UI policy hints for show/hide rules.
+
+### ACLs
+Designs a full access control strategy — custom role definitions with inheritance, record and field-level ACL rules for every operation (read, write, create, delete), data policies, and prioritised security recommendations.
+
+---
+
+## How to use it
+
+**1. Write your requirements**
+
+Use the text area on the left. Write in plain English — no special format needed. The more specific you are about users, data, and processes, the better the output.
+
+A good requirement covers:
+- What data needs to be stored and tracked
+- Who the different types of users are and what they can do
+- What processes or approvals need to happen automatically
+- Any business rules or constraints
+
+**2. Load an example (optional)**
+
+Each artifact type has a built-in example you can load with one click. Use these to see what good input looks like, or as a starting point to edit.
+
+**3. Pick an artifact type**
+
+Select Tables, Flows, Catalog, or ACLs from the card grid. You can generate all four from the same requirements — just switch tabs and hit Generate each time.
+
+**4. Generate**
+
+Hit the Generate button. Output appears on the right in a structured, readable format with all fields broken out, colour-coded type badges, and copy buttons on every card.
+
+**5. Use the output**
+
+Copy the JSON for any artifact using the copy button. The output is structured to match exactly what ServiceNow expects — field names, types, operation names, and role conventions are all correct and ready to implement.
+
+---
+
+## Tips for better output
+
+- **Be specific about roles.** Instead of "admins can do everything", name the roles: "IT managers can approve, employees can only submit their own requests."
+- **Mention edge cases.** If a field should be hidden from certain users, or a flow should behave differently above a certain value, include that.
+- **Describe the full lifecycle.** For flows especially, walk through what happens from start to finish, including rejections and errors.
+- **Generate in order.** Start with Tables, then Flows (which reference your tables), then Catalog (which triggers your flows), then ACLs (which protect your tables and fields).
+- **Iterate.** If the first output isn't quite right, refine your requirements and generate again. Small changes in wording can produce meaningfully different output.
+
+---
+
+## What it's not
+
+SN Toolkit generates the configuration — it does not deploy anything to your instance automatically. Think of it as a senior ServiceNow architect reviewing your requirements and handing you a complete technical spec, which you then implement. The output is a starting point, not a black box.
+
+---
+
+## Built for ServiceNow developers
+
+Whether you're a platform developer translating business requirements, an admin building out a new application, or a student learning ServiceNow development — SN Toolkit removes the blank-canvas problem and gets you to a working implementation faster.
