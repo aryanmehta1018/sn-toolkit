@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface: #0D0E14;
+    --surface-1: #13141C;
+    --surface-2: #1A1C26;
+    --surface-3: #21232F;
+    --surface-4: #282B39;
+    --border: #2A2D3E;
+    --electric: #6366F1;
+    --text-primary: #F0F1F6;
+    --text-secondary: #8B8FA8;
+    --text-muted: #4D5168;
+  }
+
+  * {
+    @apply border-[#2A2D3E];
+  }
+
+  html {
+    @apply antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-[#0D0E14] text-[#F0F1F6];
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0D0E14;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background: #2A2D3E;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3A3D52;
+  }
+
+  ::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: #F0F1F6;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-[#13141C]/80 backdrop-blur-sm border border-[#2A2D3E];
+  }
+
+  .glow-border {
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+  }
+
+  .shimmer-bg {
+    background: linear-gradient(
+      90deg,
+      #1A1C26 25%,
+      #21232F 50%,
+      #1A1C26 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .tag {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-mono font-medium border;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+           bg-[#6366F1] hover:bg-[#4F46E5] text-white
+           transition-all duration-200 active:scale-[0.98]
+           shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:bg-[#6366F1];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+           text-[#8B8FA8] hover:text-[#F0F1F6] hover:bg-[#1A1C26]
+           transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full bg-[#13141C] border border-[#2A2D3E] rounded-xl px-4 py-3
+           text-[#F0F1F6] text-sm placeholder-[#4D5168]
+           focus:outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1]/50
+           transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-[#13141C] border border-[#2A2D3E] rounded-2xl overflow-hidden;
+  }
+
+  .card-header {
+    @apply bg-[#1A1C26] border-b border-[#2A2D3E] px-5 py-4;
+  }
+}
